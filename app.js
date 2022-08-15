@@ -12,6 +12,8 @@ const nextSong = $(".btn-next");
 const prevSong = $(".btn-prev");
 const random = $(".btn-random");
 const repeatBtn = $(".btn-repeat");
+const playlist = $(".playlist");
+
 const app = {
   currentIndex: 0,
   isPlaying: false,
@@ -62,9 +64,11 @@ const app = {
     },
   ],
   render: function () {
-    const htmls = this.songs.map((song) => {
+    const htmls = this.songs.map((song, index) => {
       return `
-        <div class="song">
+        <div class="song ${
+          index === this.currentIndex ? "active" : ""
+        }" data-index =" ${index}">
         <div
           class="thumb"
           style="
@@ -81,7 +85,7 @@ const app = {
       </div>
         `;
     });
-    $(".playlist").innerHTML = htmls.join("");
+    playlist.innerHTML = htmls.join("");
   },
   defineProperties: function () {
     Object.defineProperty(this, "currentSong", {
@@ -98,7 +102,6 @@ const app = {
       duration: 100000,
       iteration: Infinity,
     });
-    console.log(cdThumbAnimate);
     cdThumbAnimate.pause();
     // Xử lý phóng to thu nhỏ
     document.onscroll = function () {
@@ -148,6 +151,8 @@ const app = {
         _this.nextSong();
       }
       audio.play();
+      _this.render();
+      _this.scrollToActiveSong();
     };
     prevSong.onclick = function () {
       if (_this.isRandom) {
@@ -156,6 +161,8 @@ const app = {
         _this.prevSong();
       }
       audio.play();
+      _this.render();
+      _this.scrollToActiveSong();
     };
     //khi click vaof button random
     random.onclick = function () {
@@ -175,6 +182,26 @@ const app = {
       _this.isRepeat = !_this.isRepeat;
       repeatBtn.classList.toggle("active", _this.isRepeat);
     };
+    //Khi click vào từng bài
+    playlist.onclick = function (e) {
+      const songNode = e.target.closest(".song:not(.active)");
+      if (songNode || e.target.closest(".option")) {
+        if (songNode) {
+          _this.currentIndex = Number(songNode.dataset.index);
+          _this.loadCurrentSong();
+          _this.render();
+          audio.play();
+        }
+      }
+    };
+  },
+  scrollToActiveSong: function () {
+    setTimeout(() => {
+      $(".song.active").scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 300);
   },
   loadCurrentSong: function () {
     heading.textContent = this.currentSong.name;
