@@ -109,39 +109,39 @@ const app = {
       const newCdWidth = cdWidth - scrollTop;
 
       cd.style.width = newCdWidth > 0 ? newCdWidth + "px" : 0;
-      //Xử lý khi play
-      playBtn.onclick = function () {
-        if (_this.isPlaying) {
-          audio.pause();
-        } else {
-          audio.play();
-        }
-        // Khi song được play
-        audio.onplay = function () {
-          _this.isPlaying = true;
-          player.classList.add("playing");
-          cdThumbAnimate.play();
-        };
-        audio.onpause = function () {
-          _this.isPlaying = false;
-          player.classList.remove("playing");
-          cdThumbAnimate.pause();
-        };
+    };
+    //Xử lý khi play
+    playBtn.onclick = function () {
+      if (_this.isPlaying) {
+        audio.pause();
+      } else {
+        audio.play();
+      }
+      // Khi song được play
+      audio.onplay = function () {
+        _this.isPlaying = true;
+        player.classList.add("playing");
+        cdThumbAnimate.play();
       };
-      //Khi tiến độ bài hát thay đổi
-      audio.ontimeupdate = function () {
-        if (audio.duration) {
-          const progressPercent = Math.floor(
-            (audio.currentTime / audio.duration) * 100
-          );
-          progress.value = progressPercent;
-        }
+      audio.onpause = function () {
+        _this.isPlaying = false;
+        player.classList.remove("playing");
+        cdThumbAnimate.pause();
       };
-      //Khi tua song
-      progress.onchange = function (e) {
-        const seek = (audio.duration / 100) * e.target.value;
-        audio.currentTime = seek;
-      };
+    };
+    //Khi tiến độ bài hát thay đổi
+    audio.ontimeupdate = function () {
+      if (audio.duration) {
+        const progressPercent = Math.floor(
+          (audio.currentTime / audio.duration) * 100
+        );
+        progress.value = progressPercent;
+      }
+    };
+    //Khi tua song
+    progress.onchange = function (e) {
+      const seek = (audio.duration / 100) * e.target.value;
+      audio.currentTime = seek;
     };
     //Khi next bai moi
     nextSong.onclick = function () {
